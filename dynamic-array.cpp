@@ -46,7 +46,7 @@ public:
     }
 
     T find_element(unsigned int i) {
-        if (i <= num_of_elements - 1) {
+        if (i < num_of_elements) {
             return array[i];
         }
         else {
@@ -65,14 +65,18 @@ public:
 
     void sort() {
         T tmp;
+        bool flag;
         for (int i = 0; i < num_of_elements - 1; i++) {
+            flag = 0;
             for (int j = 0; j < num_of_elements - i - 1; j++) {
                 if (array[j] > array[j + 1]) {
                     tmp = array[j];
                     array[j] = array[j + 1];
                     array[j + 1] = tmp;
+                    flag = 1;
                 }
             }
+            if (!flag) break;
         }
     }
 
@@ -92,10 +96,9 @@ public:
         if (n > num_of_elements) n = num_of_elements;
 
         for (unsigned int i = 0; i < n; i++) {
-            output << array[i] << endl;
+            output << *&array[i] << endl;
         }
        
-
         return output.str();
     }
 };
@@ -123,52 +126,44 @@ int main()
 {
     DynamicArr<ArrData>* dynamic_array = new DynamicArr<ArrData>();
     ArrData* data = new ArrData();
-    data->d1 = 1;
-    data->d2 = 'a';
-    dynamic_array->add_element(*data);
-    data->d1 = 2;
-    data->d2 = 'b';
-    dynamic_array->add_element(*data);
-    data->d1 = 3;
-    data->d2 = 'c';
-    dynamic_array->add_element(*data);
-    data->d1 = 4;
-    data->d2 = 'd';
-    dynamic_array->add_element(*data);
-    data->d1 = 5;
-    data->d2 = 'e';
-    dynamic_array->add_element(*data);
-    cout << dynamic_array->display_array(10);
-    cout << "----------------------------" << endl;
-    cout << dynamic_array->find_element(4) << endl;
-    cout << "----------------------------" << endl;
-    dynamic_array->delete_all();
-    cout << dynamic_array->display_array(10);
-    cout << "----------------------------" << endl;
-    data->d1 = 12;
-    data->d2 = 'a';
-    dynamic_array->add_element(*data);
-    data->d1 = 3;
-    data->d2 = 'b';
-    dynamic_array->add_element(*data);
-    data->d1 = 7;
-    data->d2 = 'c';
-    dynamic_array->add_element(*data);
-    data->d1 = 4;
-    data->d2 = 'd';
-    dynamic_array->add_element(*data);
-    data->d1 = 1;
-    data->d2 = 'e';
-    dynamic_array->add_element(*data);
-    cout << dynamic_array->display_array(10);
-    cout << "----------------------------" << endl;
-    data->d1 = 10;
-    data->d2 = 'g';
-    dynamic_array->swap_data(2, *data);
-    cout << dynamic_array->display_array(10);
-    cout << "----------------------------" << endl;
-    dynamic_array->sort();
-    cout << dynamic_array->display_array(10);
+    
+    const int order = 7;
+    const int n = pow(10, order);
 
+    clock_t t1 = clock();
+    double max_time_per_element = 0.0;
+    double sum_of_max_times = 0.0;
+    int num_of_max_times = 0;
+
+    for (int i = 0; i < n; i++) {
+        
+        data->d1 = rand() % 1000;
+        data->d2 = 'a' + rand() % 26;
+
+        clock_t t1_element = clock();
+        dynamic_array->add_element(*data);
+        clock_t t2_element = clock();
+        double time_per_element = (t2_element - t1_element) / (double)CLOCKS_PER_SEC;
+            if (time_per_element > max_time_per_element) {
+                max_time_per_element = time_per_element;
+                num_of_max_times++;
+                sum_of_max_times = sum_of_max_times + max_time_per_element;
+                cout << "================================================" << endl;
+                cout << "Nowy najgorszy czas na indeksie: " << i << endl;
+                cout << "Czas: " << max_time_per_element << endl;
+                cout << "================================================" << endl;
+            }
+    }
+    clock_t t2 = clock();
+
+    double time = (t2 - t1) / (double)CLOCKS_PER_SEC;
+
+    cout << "\n\n" << "================================================" << endl;
+    cout << "Czas calkowity: " << time << endl;
+    cout << "Czas amortyzowany: " << sum_of_max_times / num_of_max_times << endl;
+    cout << "================================================" << endl;
+
+    delete data;
+    delete dynamic_array;
     system("pause");
 }
