@@ -159,6 +159,8 @@ int main()
     double time = (t2 - t1) / (double)CLOCKS_PER_SEC;
 
     cout << "\n\n" << "================================================" << endl;
+    cout << dynamic_array->display_array();
+    cout << "---------------------------------------------" << endl;
     cout << "Czas calkowity: " << time << endl;
     cout << "Czas amortyzowany: " << sum_of_max_times / num_of_max_times << endl;
     cout << "================================================" << endl;
